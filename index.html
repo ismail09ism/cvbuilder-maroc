@@ -625,23 +625,12 @@
         // ============================================
         // تهيئة Telegram WebApp
         // ============================================
-        let tg = null;
-        
-        // تهيئة آمنة لـ Telegram WebApp
-        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-            tg = window.Telegram.WebApp;
-            
-            // استدعاء ready() بأمان
-            if (typeof tg.ready === 'function') {
-                tg.ready();
-            }
-            
-            // استدعاء expand() بأمان
-            if (typeof tg.expand === 'function') {
-                tg.expand();
-            }
-            
-            // تطبيق Telegram theme
+        const tg = window.Telegram?.WebApp;
+
+        if (tg) {
+            tg.ready();
+            tg.expand();
+
             if (tg.colorScheme) {
                 document.documentElement.style.colorScheme = tg.colorScheme;
             }
@@ -985,18 +974,12 @@ ${'═'.repeat(40)}
             }
         });
 
-        // دعم تغيير الثيم في Telegram
+        // دعم التنقل في Telegram
         if (tg && tg.onEvent) {
-            try {
-                tg.onEvent('themeChanged', () => {
-                    // إعادة تحميل الألوان عند تغيير الثيم
-                    if (tg.colorScheme) {
-                        document.documentElement.style.colorScheme = tg.colorScheme;
-                    }
-                });
-            } catch (e) {
-                // قد لا تكون الميزة متاحة
-            }
+            tg.onEvent('themeChanged', () => {
+                // إعادة تحميل الألوان عند تغيير الثيم
+                document.documentElement.style.colorScheme = tg.colorScheme;
+            });
         }
     </script>
 </body>
