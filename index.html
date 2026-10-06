@@ -2,8 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="تطبيق سيرة ذاتية احترافي مصمم للهواتف الذكية والعمل داخل تطبيق تيليجرام">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CVBuilder Maroc">
     <title>CVBuilder Maroc - منشئ السيرة الذاتية</title>
     
     <!-- Telegram WebApp Integration -->
@@ -17,17 +21,29 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 10px;
             color: #333;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
         }
 
         /* ============================================
@@ -41,6 +57,9 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
         }
 
         @keyframes slideUp {
@@ -60,20 +79,22 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px 20px;
+            padding: 20px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
         .header p {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
+            font-weight: 500;
         }
 
         /* ============================================
@@ -82,14 +103,21 @@
         .content {
             display: flex;
             flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .section {
             display: none;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .section.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
             animation: fadeIn 0.3s ease-in;
         }
 
@@ -107,17 +135,18 @@
            ============================================ */
         .form-section {
             padding: 20px;
+            flex: 1;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #333;
         }
 
@@ -125,13 +154,24 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 11px 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: inherit;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             background: #f9f9f9;
+            -webkit-appearance: none;
+            appearance: none;
+            line-height: 1.5;
+        }
+
+        .form-group select {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 12px center;
+            padding-right: 12px;
+            padding-left: 30px;
         }
 
         .form-group input:focus,
@@ -140,11 +180,12 @@
             outline: none;
             border-color: #667eea;
             background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 90px;
             font-family: inherit;
         }
 
@@ -156,18 +197,26 @@
             gap: 10px;
             padding: 20px;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         button {
-            padding: 14px 28px;
+            padding: 13px 24px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             flex: 1;
             text-transform: none;
+            min-height: 44px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        button:active {
+            opacity: 0.9;
         }
 
         .btn-primary {
@@ -196,13 +245,20 @@
            ============================================ */
         .preview-section {
             padding: 0;
-            background: #f9f9f9;
+            background: #f5f5f5;
+            flex-direction: column;
+        }
+
+        .cv-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 15px;
         }
 
         .cv-preview {
             background: white;
             padding: 20px;
-            margin: 15px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
@@ -218,33 +274,33 @@
         }
 
         .cv-header h2 {
-            font-size: 24px;
+            font-size: 22px;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .cv-header .contact-info {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
             font-size: 12px;
             color: #666;
-            flex-wrap: wrap;
-            justify-content: center;
+            line-height: 1.4;
         }
 
         .cv-header .contact-info span {
-            margin: 0 5px;
+            word-break: break-word;
         }
 
         .cv-section-title {
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 700;
             color: white;
             background: #667eea;
-            padding: 8px 12px;
+            padding: 10px 12px;
             margin: 15px 0 10px 0;
-            border-radius: 4px;
+            border-radius: 6px;
             text-align: right;
         }
 
@@ -253,6 +309,8 @@
             line-height: 1.6;
             color: #555;
             margin-bottom: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .cv-section-content strong {
@@ -270,13 +328,13 @@
         .cv-actions {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            padding: 15px;
         }
 
         .cv-actions button {
             flex: 1;
-            min-width: 120px;
+            min-width: 0;
         }
 
         .btn-copy {
@@ -311,13 +369,14 @@
             right: 20px;
             background: #4CAF50;
             color: white;
-            padding: 16px;
+            padding: 14px 16px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             animation: slideInUp 0.3s ease-out;
             z-index: 1000;
             text-align: center;
             font-weight: 600;
+            font-size: 14px;
         }
 
         @keyframes slideInUp {
@@ -334,22 +393,36 @@
         /* ============================================
            استجابة الهواتف الصغيرة جداً
            ============================================ */
-        @media (max-width: 400px) {
+        @media (max-width: 380px) {
             .header h1 {
-                font-size: 24px;
+                font-size: 22px;
+            }
+
+            .header {
+                padding: 15px;
             }
 
             button {
                 padding: 12px 16px;
                 font-size: 14px;
+                min-height: 40px;
             }
 
-            .button-group {
-                flex-direction: column;
+            .form-section {
+                padding: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 14px;
             }
 
             .cv-header .contact-info {
                 font-size: 11px;
+            }
+
+            .cv-actions {
+                padding: 12px;
+                gap: 8px;
             }
         }
 
@@ -415,6 +488,19 @@
                 background: #1a1a2e;
                 color: #e0e0e0;
                 border-color: #444;
+            }
+
+            .cv-scroll-container {
+                background: #0f3460;
+            }
+        }
+
+        /* ============================================
+           iPad و Tablet Support
+           ============================================ */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
             }
         }
     </style>
@@ -513,12 +599,14 @@
                  قسم معاينة السيرة الذاتية
                  ============================================ -->
             <div id="previewSection" class="section preview-section">
-                <div class="cv-preview" id="cvPreview">
-                    <!-- ستتم ملء هذا القسم من خلال JavaScript -->
+                <div class="cv-scroll-container">
+                    <div class="cv-preview" id="cvPreview">
+                        <!-- ستتم ملء هذا القسم من خلال JavaScript -->
+                    </div>
                 </div>
 
                 <!-- أزرار السيرة الذاتية -->
-                <div class="button-group cv-actions">
+                <div class="cv-actions">
                     <button type="button" class="btn-copy" onclick="copyCV()">
                         نسخ السيرة الذاتية
                     </button>
@@ -531,23 +619,75 @@
     </div>
 
     <!-- ============================================
-         Telegram WebApp Integration
+         تطبيق JavaScript الرئيسي
          ============================================ -->
     <script>
-        // تهيئة Telegram WebApp إذا كان التطبيق يعمل داخل Telegram
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand(); // توسيع التطبيق لملء الشاشة
+        // ============================================
+        // تهيئة Telegram WebApp
+        // ============================================
+        let tg = null;
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
             
-            // تعيين لون الخلفية بناءً على ثيم Telegram
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                console.log('تم الاتصال بـ Telegram بنجاح');
+            // إعداد Telegram WebApp
+            tg.ready();
+            tg.expand();
+            
+            // تعيين الألوان بناءً على ثيم Telegram
+            try {
+                if (tg.setHeaderColor) {
+                    tg.setHeaderColor('#667eea');
+                }
+                if (tg.setBottomBarColor) {
+                    tg.setBottomBarColor('#f5f5f5');
+                }
+            } catch (e) {
+                console.log('Telegram theme colors not available');
             }
         }
 
         // ============================================
-        // دوال التطبيق الأساسية
+        // إدارة بيانات النموذج (localStorage)
+        // ============================================
+
+        /**
+         * دالة حفظ بيانات النموذج تلقائياً
+         * تحفظ البيانات كلما غير المستخدم حقل
+         */
+        function autoSaveFormData() {
+            const form = document.getElementById('cvForm');
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            localStorage.setItem('cvFormData', JSON.stringify(data));
+        }
+
+        /**
+         * دالة تحميل بيانات النموذج المحفوظة
+         */
+        function loadSavedFormData() {
+            const savedData = localStorage.getItem('cvFormData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    for (let [key, value] of Object.entries(data)) {
+                        const field = document.getElementById(key);
+                        if (field) {
+                            field.value = value;
+                        }
+                    }
+                } catch (e) {
+                    console.log('خطأ في تحميل البيانات المحفوظة');
+                }
+            }
+        }
+
+        // ============================================
+        // دوال إنشاء وعرض السيرة الذاتية
         // ============================================
 
         /**
@@ -558,7 +698,7 @@
             // التحقق من أن جميع الحقول المطلوبة تم ملؤها
             const form = document.getElementById('cvForm');
             if (!form.checkValidity()) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
+                showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
                 return;
             }
 
@@ -576,7 +716,7 @@
                 objective: document.getElementById('objective').value.trim()
             };
 
-            // تخزين البيانات في localStorage للوصول إليها لاحقاً
+            // تخزين البيانات في localStorage
             localStorage.setItem('cvData', JSON.stringify(cvData));
 
             // عرض معاينة السيرة الذاتية
@@ -584,6 +724,15 @@
 
             // التبديل إلى قسم المعاينة
             switchSection('previewSection');
+            
+            // إخطار Telegram بأن المحتوى جاهز
+            if (tg && tg.sendData) {
+                try {
+                    tg.sendData('cv_generated');
+                } catch (e) {
+                    // لا مشكلة إذا فشل الإرسال
+                }
+            }
         }
 
         /**
@@ -591,14 +740,21 @@
          * تنسق البيانات وتعرضها بشكل احترافي
          */
         function displayCVPreview(data) {
+            // تجنب XSS - تنظيف النصوص
+            const escape = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
             let html = `
                 <div class="cv-header">
-                    <h2>${data.fullName}</h2>
+                    <h2>${escape(data.fullName)}</h2>
                     <div class="contact-info">
-                        <span><strong>${data.title}</strong></span>
-                        <span>${data.city}</span>
-                        <span>${data.phone}</span>
-                        <span>${data.email}</span>
+                        <span><strong>${escape(data.title)}</strong></span>
+                        <span>${escape(data.city)}</span>
+                        <span>${escape(data.phone)}</span>
+                        <span>${escape(data.email)}</span>
                     </div>
                 </div>
             `;
@@ -608,7 +764,7 @@
                 html += `
                     <div class="cv-section-title">الهدف المهني</div>
                     <div class="cv-section-content">
-                        <p>${data.objective}</p>
+                        <p>${escape(data.objective)}</p>
                     </div>
                 `;
             }
@@ -618,7 +774,7 @@
                 html += `
                     <div class="cv-section-title">التعليم</div>
                     <div class="cv-section-content">
-                        <p><strong>المستوى الدراسي:</strong> ${data.education}</p>
+                        <p><strong>المستوى الدراسي:</strong> ${escape(data.education)}</p>
                     </div>
                 `;
             }
@@ -628,7 +784,7 @@
                 html += `
                     <div class="cv-section-title">الخبرة المهنية</div>
                     <div class="cv-section-content">
-                        <p>${data.experience}</p>
+                        <p>${escape(data.experience)}</p>
                     </div>
                 `;
             }
@@ -638,7 +794,7 @@
                 html += `
                     <div class="cv-section-title">المهارات</div>
                     <div class="cv-section-content">
-                        <p>${data.skills}</p>
+                        <p>${escape(data.skills)}</p>
                     </div>
                 `;
             }
@@ -648,7 +804,7 @@
                 html += `
                     <div class="cv-section-title">اللغات</div>
                     <div class="cv-section-content">
-                        <p>${data.languages}</p>
+                        <p>${escape(data.languages)}</p>
                     </div>
                 `;
             }
@@ -657,67 +813,94 @@
             document.getElementById('cvPreview').innerHTML = html;
         }
 
+        // ============================================
+        // دوال النسخ والتعديل
+        // ============================================
+
         /**
          * دالة نسخ السيرة الذاتية إلى الحافظة (Clipboard)
-         * تحول السيرة الذاتية إلى نص عادي وتنسخها
+         * تدعم جميع المتصفحات والأجهزة
          */
         function copyCV() {
             // الحصول على البيانات من localStorage
             const cvData = JSON.parse(localStorage.getItem('cvData'));
             
             if (!cvData) {
-                alert('لا توجد بيانات لنسخها');
+                showToast('لا توجد بيانات لنسخها', 'error');
                 return;
             }
 
             // تنسيق السيرة الذاتية كنص عادي
-            let cvText = `
-${cvData.fullName}
+            let cvText = `${cvData.fullName}
 ${cvData.title}
-${cvData.city} | ${cvData.phone} | ${cvData.email}
 
-————————————————————————
+${cvData.city} | ${cvData.phone}
+${cvData.email}
+
+${'═'.repeat(40)}
 
 الهدف المهني:
 ${cvData.objective || 'لم يتم تحديده'}
 
-————————————————————————
+${'═'.repeat(40)}
 
 التعليم:
 ${cvData.education || 'لم يتم تحديده'}
 
-————————————————————————
+${'═'.repeat(40)}
 
 الخبرة المهنية:
 ${cvData.experience || 'لم يتم تحديدها'}
 
-————————————————————————
+${'═'.repeat(40)}
 
 المهارات:
 ${cvData.skills || 'لم يتم تحديدها'}
 
-————————————————————————
+${'═'.repeat(40)}
 
 اللغات:
 ${cvData.languages || 'لم يتم تحديدها'}
 
-————————————————————————
+${'═'.repeat(40)}
 تم الإنشاء بواسطة CVBuilder Maroc
-            `.trim();
+`.trim();
 
-            // نسخ النص إلى الحافظة
-            navigator.clipboard.writeText(cvText).then(() => {
-                showToast('تم نسخ السيرة الذاتية بنجاح!');
-            }).catch(err => {
-                // في حالة فشل الحافظة الحديثة، استخدم الطريقة القديمة
-                const textarea = document.createElement('textarea');
-                textarea.value = cvText;
-                document.body.appendChild(textarea);
+            // محاولة نسخ باستخدام API الحافظة الحديثة
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(cvText)
+                    .then(() => {
+                        showToast('✓ تم نسخ السيرة الذاتية بنجاح!', 'success');
+                    })
+                    .catch(() => {
+                        fallbackCopy(cvText);
+                    });
+            } else {
+                // الطريقة البديلة للمتصفحات القديمة
+                fallbackCopy(cvText);
+            }
+        }
+
+        /**
+         * دالة النسخ البديلة للمتصفحات القديمة والهواتف
+         */
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            
+            try {
                 textarea.select();
+                textarea.setSelectionRange(0, text.length);
                 document.execCommand('copy');
+                showToast('✓ تم نسخ السيرة الذاتية بنجاح!', 'success');
+            } catch (e) {
+                showToast('فشل نسخ السيرة الذاتية', 'error');
+            } finally {
                 document.body.removeChild(textarea);
-                showToast('تم نسخ السيرة الذاتية بنجاح!');
-            });
+            }
         }
 
         /**
@@ -726,6 +909,10 @@ ${cvData.languages || 'لم يتم تحديدها'}
         function editCV() {
             switchSection('formSection');
         }
+
+        // ============================================
+        // دوال المساعدة
+        // ============================================
 
         /**
          * دالة التبديل بين الأقسام
@@ -737,37 +924,73 @@ ${cvData.languages || 'لم يتم تحديدها'}
             });
 
             // إظهار القسم المطلوب
-            document.getElementById(sectionId).classList.add('active');
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+                // تمرير التركيز
+                setTimeout(() => {
+                    section.scrollTop = 0;
+                }, 100);
+            }
         }
 
         /**
          * دالة عرض إشعار على الشاشة
          */
-        function showToast(message) {
-            // إنشاء عنصر الإشعار
+        function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.textContent = message;
+            
+            if (type === 'error') {
+                toast.style.background = '#f44336';
+            }
+            
             document.body.appendChild(toast);
 
             // إزالة الإشعار بعد 3 ثوان
             setTimeout(() => {
-                toast.remove();
-            }, 3000);
+                toast.style.animation = 'slideInUp 0.3s ease-out reverse';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 2700);
         }
 
         // ============================================
         // تهيئة التطبيق عند تحميل الصفحة
         // ============================================
         window.addEventListener('load', () => {
-            console.log('تم تحميل CVBuilder Maroc بنجاح');
+            // تحميل البيانات المحفوظة
+            loadSavedFormData();
+
+            // إضافة مستمع لحفظ البيانات تلقائياً
+            const form = document.getElementById('cvForm');
+            form.addEventListener('change', autoSaveFormData);
+            form.addEventListener('input', autoSaveFormData);
+
+            console.log('✓ تم تحميل CVBuilder Maroc بنجاح');
+        });
+
+        // منع الإغلاق بدون تحذير إذا كانت هناك تغييرات
+        window.addEventListener('beforeunload', (e) => {
+            const form = document.getElementById('cvForm');
+            const savedData = localStorage.getItem('cvFormData');
+            const currentData = new FormData(form);
             
-            // إذا كانت هناك بيانات محفوظة، يمكن تحميلها تلقائياً
-            const savedData = localStorage.getItem('cvData');
             if (savedData) {
-                console.log('تم العثور على بيانات محفوظة');
+                // التحقق من وجود تغييرات فعلية (اختياري)
+                // يمكن تفعيله إذا أردت
             }
         });
+
+        // دعم التنقل في Telegram
+        if (tg && tg.onEvent) {
+            tg.onEvent('themeChanged', () => {
+                // إعادة تحميل الألوان عند تغيير الثيم
+                document.documentElement.style.colorScheme = tg.colorScheme;
+            });
+        }
     </script>
 </body>
 </html>
