@@ -623,55 +623,27 @@
          ============================================ -->
     <script>
         // ============================================
-        // تهيئة Telegram WebApp - آمن وموثوق
+        // تهيئة Telegram WebApp
         // ============================================
         let tg = null;
         
-        /**
-         * تهيئة آمنة لـ Telegram WebApp
-         * تتحقق من توفر الـ API قبل الاستخدام
-         */
-        function initTelegramWebApp() {
-            try {
-                if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-                    tg = window.Telegram.WebApp;
-                    
-                    // استدعاء ready() بأمان
-                    if (typeof tg.ready === 'function') {
-                        tg.ready();
-                    }
-                    
-                    // استدعاء expand() بأمان
-                    if (typeof tg.expand === 'function') {
-                        tg.expand();
-                    }
-                    
-                    // تعيين الألوان بناءً على ثيم Telegram (اختياري)
-                    if (typeof tg.setHeaderColor === 'function') {
-                        try {
-                            tg.setHeaderColor('#667eea');
-                        } catch (e) {
-                            // قد لا تكون الميزة متاحة في جميع الإصدارات
-                        }
-                    }
-                    
-                    if (typeof tg.setBottomBarColor === 'function') {
-                        try {
-                            tg.setBottomBarColor('#f5f5f5');
-                        } catch (e) {
-                            // قد لا تكون الميزة متاحة في جميع الإصدارات
-                        }
-                    }
-                    
-                    // تعيين color-scheme
-                    if (tg.colorScheme) {
-                        document.documentElement.style.colorScheme = tg.colorScheme;
-                    }
-                    
-                    console.log('✓ تم تهيئة Telegram WebApp بنجاح');
-                }
-            } catch (e) {
-                console.log('ملاحظة: التطبيق يعمل بدون Telegram WebApp');
+        // تهيئة آمنة لـ Telegram WebApp
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            
+            // استدعاء ready() بأمان
+            if (typeof tg.ready === 'function') {
+                tg.ready();
+            }
+            
+            // استدعاء expand() بأمان
+            if (typeof tg.expand === 'function') {
+                tg.expand();
+            }
+            
+            // تطبيق Telegram theme
+            if (tg.colorScheme) {
+                document.documentElement.style.colorScheme = tg.colorScheme;
             }
         }
 
@@ -754,8 +726,8 @@
             // التبديل إلى قسم المعاينة
             switchSection('previewSection');
             
-            // إخطار Telegram بأن المحتوى جاهز (بأمان)
-            if (tg && typeof tg.sendData === 'function') {
+            // إخطار Telegram بأن المحتوى جاهز
+            if (tg && tg.sendData) {
                 try {
                     tg.sendData('cv_generated');
                 } catch (e) {
@@ -990,9 +962,6 @@ ${'═'.repeat(40)}
         // تهيئة التطبيق عند تحميل الصفحة
         // ============================================
         window.addEventListener('load', () => {
-            // تهيئة Telegram WebApp
-            initTelegramWebApp();
-            
             // تحميل البيانات المحفوظة
             loadSavedFormData();
 
@@ -1016,12 +985,12 @@ ${'═'.repeat(40)}
             }
         });
 
-        // دعم التنقل في Telegram
-        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp && window.Telegram.WebApp.onEvent) {
+        // دعم تغيير الثيم في Telegram
+        if (tg && tg.onEvent) {
             try {
-                window.Telegram.WebApp.onEvent('themeChanged', () => {
+                tg.onEvent('themeChanged', () => {
                     // إعادة تحميل الألوان عند تغيير الثيم
-                    if (tg && tg.colorScheme) {
+                    if (tg.colorScheme) {
                         document.documentElement.style.colorScheme = tg.colorScheme;
                     }
                 });
