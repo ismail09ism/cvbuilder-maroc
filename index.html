@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تطبيق سيرة ذاتية احترافي مصمم للهواتف الذكية والعمل داخل تطبيق تيليجرام">
+    <title>CVBuilder Maroc - منشئ السيرة الذاتية</title>
+    
+    <!-- Telegram WebApp Integration -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        /* ============================================
+           تصميم أساسي و استعادة القيم الافتراضية
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+        }
+
+        /* ============================================
+           حاوية التطبيق الرئيسية
+           ============================================ */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           رأس التطبيق
+           ============================================ */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* ============================================
+           التقسيمات الرئيسية (من/إلى)
+           ============================================ */
+        .content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           نموذج الإدخال (الجزء الأول)
+           ============================================ */
+        .form-section {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        /* ============================================
+           الأزرار
+           ============================================ */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-transform: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:active {
+            background: #e8e8e8;
+        }
+
+        /* ============================================
+           قسم معاينة السيرة الذاتية
+           ============================================ */
+        .preview-section {
+            padding: 0;
+            background: #f9f9f9;
+        }
+
+        .cv-preview {
+            background: white;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============================================
+           عناصر السيرة الذاتية
+           ============================================ */
+        .cv-header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .cv-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .cv-header .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cv-header .contact-info span {
+            margin: 0 5px;
+        }
+
+        .cv-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            background: #667eea;
+            padding: 8px 12px;
+            margin: 15px 0 10px 0;
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .cv-section-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .cv-section-content strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .cv-section-content p {
+            margin: 8px 0;
+        }
+
+        /* ============================================
+           أزرار السيرة الذاتية
+           ============================================ */
+        .cv-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cv-actions button {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-copy {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-copy:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-edit:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+
+        /* ============================================
+           إشعار النسخ
+           ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideInUp 0.3s ease-out;
+            z-index: 1000;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           استجابة الهواتف الصغيرة جداً
+           ============================================ */
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            button {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .cv-header .contact-info {
+                font-size: 11px;
+            }
+        }
+
+        /* ============================================
+           دعم الوضع المظلم في Telegram
+           ============================================ */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+
+            .container {
+                background: #0f3460;
+                color: #e0e0e0;
+            }
+
+            .header {
+                background: linear-gradient(135deg, #533483 0%, #4a2a5c 100%);
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                background: #1a1a2e;
+                color: #e0e0e0;
+                border-color: #444;
+            }
+
+            .form-group label {
+                color: #e0e0e0;
+            }
+
+            .cv-preview {
+                background: #1a1a2e;
+                color: #e0e0e0;
+            }
+
+            .cv-header {
+                border-bottom-color: #667eea;
+            }
+
+            .cv-header h2 {
+                color: #e0e0e0;
+            }
+
+            .cv-header .contact-info {
+                color: #aaa;
+            }
+
+            .cv-section-content {
+                color: #ccc;
+            }
+
+            .cv-section-content strong {
+                color: #e0e0e0;
+            }
+
+            .preview-section {
+                background: #0f3460;
+            }
+
+            .btn-secondary {
+                background: #1a1a2e;
+                color: #e0e0e0;
+                border-color: #444;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============================================
+             الرأس
+             ============================================ -->
+        <div class="header">
+            <h1>CVBuilder Maroc</h1>
+            <p>منشئ السيرة الذاتية الاحترافي</p>
+        </div>
+
+        <div class="content">
+            <!-- ============================================
+                 قسم النموذج (إدخال البيانات)
+                 ============================================ -->
+            <div id="formSection" class="section form-section active">
+                <form id="cvForm">
+                    <!-- المعلومات الشخصية -->
+                    <div class="form-group">
+                        <label for="fullName">الاسم الكامل</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="مثال: محمد علي" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">المسمى المهني</label>
+                        <input type="text" id="title" name="title" placeholder="مثال: مهندس برمجيات" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف</label>
+                        <input type="tel" id="phone" name="phone" placeholder="مثال: +212 612345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" name="email" placeholder="مثال: example@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">المدينة</label>
+                        <input type="text" id="city" name="city" placeholder="مثال: الرباط" required>
+                    </div>
+
+                    <!-- التعليم -->
+                    <div class="form-group">
+                        <label for="education">المستوى الدراسي</label>
+                        <select id="education" name="education" required>
+                            <option value="">-- اختر المستوى --</option>
+                            <option value="ابتدائي">ابتدائي</option>
+                            <option value="إعدادي">إعدادي</option>
+                            <option value="ثانوي">ثانوي</option>
+                            <option value="دبلوم">دبلوم</option>
+                            <option value="درجة البكالوريوس">درجة البكالوريوس</option>
+                            <option value="درجة الماجستير">درجة الماجستير</option>
+                            <option value="درجة الدكتوراه">درجة الدكتوراه</option>
+                        </select>
+                    </div>
+
+                    <!-- الخبرة المهنية -->
+                    <div class="form-group">
+                        <label for="experience">الخبرة المهنية</label>
+                        <textarea id="experience" name="experience" placeholder="اكتب خبرتك المهنية (مثال: 3 سنوات في تطوير الويب...)"></textarea>
+                    </div>
+
+                    <!-- المهارات -->
+                    <div class="form-group">
+                        <label for="skills">المهارات</label>
+                        <textarea id="skills" name="skills" placeholder="اكتب مهاراتك (مثال: JavaScript, HTML, CSS, ...)"></textarea>
+                    </div>
+
+                    <!-- اللغات -->
+                    <div class="form-group">
+                        <label for="languages">اللغات</label>
+                        <textarea id="languages" name="languages" placeholder="اكتب اللغات التي تتقنها (مثال: العربية، الفرنسية، الإنجليزية)"></textarea>
+                    </div>
+
+                    <!-- الهدف المهني -->
+                    <div class="form-group">
+                        <label for="objective">الهدف المهني</label>
+                        <textarea id="objective" name="objective" placeholder="اكتب هدفك المهني..."></textarea>
+                    </div>
+                </form>
+
+                <!-- أزرار النموذج -->
+                <div class="button-group">
+                    <button type="button" class="btn-primary" onclick="generateCV()">
+                        إنشاء السيرة الذاتية
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 قسم معاينة السيرة الذاتية
+                 ============================================ -->
+            <div id="previewSection" class="section preview-section">
+                <div class="cv-preview" id="cvPreview">
+                    <!-- ستتم ملء هذا القسم من خلال JavaScript -->
+                </div>
+
+                <!-- أزرار السيرة الذاتية -->
+                <div class="button-group cv-actions">
+                    <button type="button" class="btn-copy" onclick="copyCV()">
+                        نسخ السيرة الذاتية
+                    </button>
+                    <button type="button" class="btn-edit" onclick="editCV()">
+                        تعديل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Telegram WebApp Integration
+         ============================================ -->
+    <script>
+        // تهيئة Telegram WebApp إذا كان التطبيق يعمل داخل Telegram
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand(); // توسيع التطبيق لملء الشاشة
+            
+            // تعيين لون الخلفية بناءً على ثيم Telegram
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                console.log('تم الاتصال بـ Telegram بنجاح');
+            }
+        }
+
+        // ============================================
+        // دوال التطبيق الأساسية
+        // ============================================
+
+        /**
+         * دالة إنشاء السيرة الذاتية
+         * تجمع البيانات من النموذج وتعرض معاينة السيرة الذاتية
+         */
+        function generateCV() {
+            // التحقق من أن جميع الحقول المطلوبة تم ملؤها
+            const form = document.getElementById('cvForm');
+            if (!form.checkValidity()) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            // جمع البيانات من النموذج
+            const cvData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                title: document.getElementById('title').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                education: document.getElementById('education').value.trim(),
+                experience: document.getElementById('experience').value.trim(),
+                skills: document.getElementById('skills').value.trim(),
+                languages: document.getElementById('languages').value.trim(),
+                objective: document.getElementById('objective').value.trim()
+            };
+
+            // تخزين البيانات في localStorage للوصول إليها لاحقاً
+            localStorage.setItem('cvData', JSON.stringify(cvData));
+
+            // عرض معاينة السيرة الذاتية
+            displayCVPreview(cvData);
+
+            // التبديل إلى قسم المعاينة
+            switchSection('previewSection');
+        }
+
+        /**
+         * دالة عرض معاينة السيرة الذاتية
+         * تنسق البيانات وتعرضها بشكل احترافي
+         */
+        function displayCVPreview(data) {
+            let html = `
+                <div class="cv-header">
+                    <h2>${data.fullName}</h2>
+                    <div class="contact-info">
+                        <span><strong>${data.title}</strong></span>
+                        <span>${data.city}</span>
+                        <span>${data.phone}</span>
+                        <span>${data.email}</span>
+                    </div>
+                </div>
+            `;
+
+            // قسم الهدف المهني
+            if (data.objective) {
+                html += `
+                    <div class="cv-section-title">الهدف المهني</div>
+                    <div class="cv-section-content">
+                        <p>${data.objective}</p>
+                    </div>
+                `;
+            }
+
+            // قسم التعليم
+            if (data.education) {
+                html += `
+                    <div class="cv-section-title">التعليم</div>
+                    <div class="cv-section-content">
+                        <p><strong>المستوى الدراسي:</strong> ${data.education}</p>
+                    </div>
+                `;
+            }
+
+            // قسم الخبرة المهنية
+            if (data.experience) {
+                html += `
+                    <div class="cv-section-title">الخبرة المهنية</div>
+                    <div class="cv-section-content">
+                        <p>${data.experience}</p>
+                    </div>
+                `;
+            }
+
+            // قسم المهارات
+            if (data.skills) {
+                html += `
+                    <div class="cv-section-title">المهارات</div>
+                    <div class="cv-section-content">
+                        <p>${data.skills}</p>
+                    </div>
+                `;
+            }
+
+            // قسم اللغات
+            if (data.languages) {
+                html += `
+                    <div class="cv-section-title">اللغات</div>
+                    <div class="cv-section-content">
+                        <p>${data.languages}</p>
+                    </div>
+                `;
+            }
+
+            // تحديث معاينة السيرة الذاتية
+            document.getElementById('cvPreview').innerHTML = html;
+        }
+
+        /**
+         * دالة نسخ السيرة الذاتية إلى الحافظة (Clipboard)
+         * تحول السيرة الذاتية إلى نص عادي وتنسخها
+         */
+        function copyCV() {
+            // الحصول على البيانات من localStorage
+            const cvData = JSON.parse(localStorage.getItem('cvData'));
+            
+            if (!cvData) {
+                alert('لا توجد بيانات لنسخها');
+                return;
+            }
+
+            // تنسيق السيرة الذاتية كنص عادي
+            let cvText = `
+${cvData.fullName}
+${cvData.title}
+${cvData.city} | ${cvData.phone} | ${cvData.email}
+
+————————————————————————
+
+الهدف المهني:
+${cvData.objective || 'لم يتم تحديده'}
+
+————————————————————————
+
+التعليم:
+${cvData.education || 'لم يتم تحديده'}
+
+————————————————————————
+
+الخبرة المهنية:
+${cvData.experience || 'لم يتم تحديدها'}
+
+————————————————————————
+
+المهارات:
+${cvData.skills || 'لم يتم تحديدها'}
+
+————————————————————————
+
+اللغات:
+${cvData.languages || 'لم يتم تحديدها'}
+
+————————————————————————
+تم الإنشاء بواسطة CVBuilder Maroc
+            `.trim();
+
+            // نسخ النص إلى الحافظة
+            navigator.clipboard.writeText(cvText).then(() => {
+                showToast('تم نسخ السيرة الذاتية بنجاح!');
+            }).catch(err => {
+                // في حالة فشل الحافظة الحديثة، استخدم الطريقة القديمة
+                const textarea = document.createElement('textarea');
+                textarea.value = cvText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('تم نسخ السيرة الذاتية بنجاح!');
+            });
+        }
+
+        /**
+         * دالة العودة إلى تعديل السيرة الذاتية
+         */
+        function editCV() {
+            switchSection('formSection');
+        }
+
+        /**
+         * دالة التبديل بين الأقسام
+         */
+        function switchSection(sectionId) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // إظهار القسم المطلوب
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        /**
+         * دالة عرض إشعار على الشاشة
+         */
+        function showToast(message) {
+            // إنشاء عنصر الإشعار
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // إزالة الإشعار بعد 3 ثوان
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // ============================================
+        // تهيئة التطبيق عند تحميل الصفحة
+        // ============================================
+        window.addEventListener('load', () => {
+            console.log('تم تحميل CVBuilder Maroc بنجاح');
+            
+            // إذا كانت هناك بيانات محفوظة، يمكن تحميلها تلقائياً
+            const savedData = localStorage.getItem('cvData');
+            if (savedData) {
+                console.log('تم العثور على بيانات محفوظة');
+            }
+        });
+    </script>
+</body>
+</html>
